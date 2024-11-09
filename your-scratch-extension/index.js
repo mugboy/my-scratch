@@ -4,14 +4,18 @@ const TargetType = require('../../extension-support/target-type');
 
 class Scratch3YourExtension {
 
-    constructor (runtime) {
+    constructor(runtime) {
         // put any setup for your extension here
+        import('syllable')
+            .then((syllableModule) => {
+                this.syllable = syllableModule.syllable;
+            });
     }
 
     /**
      * Returns the metadata about your extension.
      */
-    getInfo () {
+    getInfo() {
         return {
             // unique ID for your extension
             id: 'yourScratchExtension',
@@ -50,7 +54,7 @@ class Scratch3YourExtension {
                     //   TargetType.SPRITE - for code in sprites
                     //   TargetType.STAGE  - for code on the stage / backdrop
                     // remove one of these if this block doesn't apply to both
-                    filter: [ TargetType.SPRITE, TargetType.STAGE ],
+                    filter: [TargetType.SPRITE, TargetType.STAGE],
 
                     // arguments used in the block
                     arguments: {
@@ -81,6 +85,26 @@ class Scratch3YourExtension {
                             type: ArgumentType.STRING
                         }
                     }
+                },
+                {
+                    // function where your code logic lives
+                    opcode: 'mySecondBlock',
+
+                    // type of block
+                    blockType: BlockType.REPORTER,
+
+                    // label to display on the block
+                    text: 'Syllables in [MY_TEXT]',
+
+                    // arguments used in the block
+                    arguments: {
+                        MY_TEXT: {
+                            defaultValue: 'Hello World',
+
+                            // type/shape of the parameter
+                            type: ArgumentType.STRING
+                        }
+                    }
                 }
             ]
         };
@@ -91,9 +115,13 @@ class Scratch3YourExtension {
      * implementation of the block with the opcode that matches this name
      *  this will be called when the block is used
      */
-    myFirstBlock ({ MY_NUMBER, MY_STRING }) {
+    myFirstBlock({ MY_NUMBER, MY_STRING }) {
         // example implementation to return a string
         return MY_STRING + ' : doubled would be ' + (MY_NUMBER * 2);
+    }
+
+    mySecondBlock({ MY_TEXT }) {
+        return this.syllable(MY_TEXT);
     }
 }
 
